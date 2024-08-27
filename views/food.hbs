@@ -1,0 +1,38 @@
+<div class="mb-3">
+  <a
+    class="btn btn-outline-primary"
+    type="button"
+    name="category"
+    id="inlineRadio1"
+    value="all"
+    checked
+    href="/"
+  >All</a>
+  <a class="btn btn-primary" type="button" name="category" id="inlineRadio2" value="food">Food</a>
+  <a
+    class="btn btn-outline-primary"
+    type="radio"
+    name="category"
+    id="inlineRadio3"
+    value="drinks"
+    href="/drinks"
+  >Drinks</a>
+</div>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+  {{#each products}}
+    <div class="col">
+      <div class="card shadow-sm">
+        <img src="{{image}}" />
+        <div class="card-body">
+          <p class="card-text fw-bold">{{title}}</p>
+          <div class="d-flex justify-content-end align-items-center">
+            <small class="text-body-secondary fs-6">{{price}}$</small>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a type="button" class="btn btn-outline-primary" href="/product/{{_id}}">About</a>
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</div>
