@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { create } from "express-handlebars";
 import { allowInsecurePrototypeAccess } from "@handlebars/allow-prototype-access";
@@ -13,6 +14,7 @@ import varMiddleware from "./middlewares/var.js";
 import userMiddleware from "./middlewares/user.js";
 
 const app = express();
+const useMockDb = process.env.USE_MOCK_DB === "true";
 
 const hbs = create({
   defaultLayout: "main",
@@ -49,11 +51,31 @@ const PORT = process.env.PORT || 3000;
 
 // database connection
 const dbURI =
+  process.env.MONGODB_URI ||
   "mongodb+srv://saidazim:test123@cluster0.mhvu77y.mongodb.net/?retryWrites=true&w=majority";
-mongoose
-  .connect(dbURI)
-  .then((result) => app.listen(PORT))
-  .catch((err) => console.log(err));
+
+if (useMockDb) {
+  app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT} in mock mode`);
+  });
+} else if (!process.env.MONGODB_URI) {
+  console.warn(
+    "MONGODB_URI is not set. Either provide a database connection string or set USE_MOCK_DB=true to run with in-memory data."
+  );
+  mongoose
+    .connect(dbURI)
+    .then(() =>
+      app.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
+    )
+    .catch((err) => console.log(err));
+} else {
+  mongoose
+    .connect(dbURI)
+    .then(() =>
+      app.listen(PORT, () => console.log(`Server listening on port ${PORT}`))
+    )
+    .catch((err) => console.log(err));
+}
 
 // routes
 app.use(authRoutes);
